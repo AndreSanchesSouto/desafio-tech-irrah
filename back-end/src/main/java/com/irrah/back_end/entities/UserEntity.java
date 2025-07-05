@@ -1,8 +1,6 @@
-package com.irrah.back_end.entity;
+package com.irrah.back_end.entities;
 
-import com.irrah.back_end.dto.user.RegisterUserDto;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -31,19 +29,20 @@ public class UserEntity {
     @Column(nullable = false)
     private String status;
 
+    @Setter
     @Column(nullable = false)
     private String role;
 
     @Setter
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String planType;
 
     @Setter
-    @Column(nullable = false)
+    @Column(nullable = true)
     private BigDecimal balance;
 
     @Setter
-    @Column(nullable = false)
+    @Column(nullable = true)
     private BigDecimal monthLimit;
 
     @Column(nullable = false)

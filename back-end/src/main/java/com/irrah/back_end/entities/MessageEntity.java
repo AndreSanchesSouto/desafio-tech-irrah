@@ -1,4 +1,4 @@
-package com.irrah.back_end.entity;
+package com.irrah.back_end.entities;
 
 import jakarta.persistence.*;
 import lombok.Getter;
