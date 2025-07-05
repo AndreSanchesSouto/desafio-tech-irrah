@@ -58,6 +58,7 @@ public class UserService {
     public void validateUserDataCreation(RegisterUserDto request, Role role) {
         this.validateRole(role);
         this.userDocumentExists(request.document());
+        this.userNameExists(request.name());
     }
 
     public Role validateRole(Role role) {
@@ -65,6 +66,12 @@ public class UserService {
             if(r == role) return role;
         }
         throw new RoleException("Nível de acesso do usuário não aceito");
+    }
+
+    public void userNameExists(String name) {
+        if( repository.findByName(name).isPresent()) {
+            throw new UserException("Nome já registrado");
+        }
     }
 
     public void userDocumentExists(String document) {
