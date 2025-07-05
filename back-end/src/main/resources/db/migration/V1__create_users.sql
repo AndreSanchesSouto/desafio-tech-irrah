@@ -1,6 +1,6 @@
 CREATE TABLE users(
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
+    name VARCHAR(100) NOT NULL UNIQUE,
     document VARCHAR(14) NOT NULL UNIQUE,
     role VARCHAR(50) NOT NULL,
     status BOOLEAN NOT NULL,

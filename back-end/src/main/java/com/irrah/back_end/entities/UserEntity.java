@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.UUID;
 
@@ -18,11 +19,11 @@ public class UserEntity {
     private UUID id;
 
     @Setter
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String name;
 
     @Setter
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String document;
 
     @Setter
@@ -37,11 +38,9 @@ public class UserEntity {
     @Column(nullable = true)
     private String planType;
 
-    @Setter
     @Column(nullable = true)
     private BigDecimal balance;
 
-    @Setter
     @Column(nullable = true)
     private BigDecimal monthLimit;
 
@@ -51,5 +50,15 @@ public class UserEntity {
     @Setter
     @Column(nullable = true)
     private LocalDate removedDt;
+
+    public void setBalance(String balance) {
+        BigDecimal actualValue = new BigDecimal(balance);
+        this.balance = actualValue.setScale(2, RoundingMode.HALF_UP);
+    }
+
+    public void setMonthLimit(String setMonthLimit) {
+        BigDecimal actualValue = new BigDecimal(setMonthLimit);
+        this.balance = actualValue.setScale(2, RoundingMode.HALF_UP);
+    }
 
 }
