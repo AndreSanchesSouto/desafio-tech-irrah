@@ -1,5 +1,7 @@
 package com.irrah.back_end.entities;
 
+import com.irrah.back_end.enums.MessagePriority;
+import com.irrah.back_end.enums.MessageType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,8 +11,8 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
-@Getter
 @Setter
+@Getter
 @Table(name = "messages")
 public class MessageEntity {
 
@@ -25,6 +27,10 @@ public class MessageEntity {
     @ManyToOne
     @JoinColumn(name = "user_receiver_id", nullable = false)
     private UserEntity userReceiver;
+
+    @ManyToOne
+    @JoinColumn(name = "chat_id", nullable = false)
+    private ChatEntity chat;
 
     @Column(nullable = false)
     private String text;

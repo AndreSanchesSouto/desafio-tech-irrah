@@ -1,13 +1,12 @@
 package com.irrah.back_end.controllers;
 
-import com.irrah.back_end.dtos.authentication.AuthenticationLogin;
-import com.irrah.back_end.dtos.authentication.AuthenticationResponse;
+import com.irrah.back_end.dtos.authentication.LoginAuthentication;
+import com.irrah.back_end.dtos.authentication.ResponseAuthentication;
 import com.irrah.back_end.dtos.user.RegisterUserDto;
 import com.irrah.back_end.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -23,7 +22,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthenticationResponse> login(@RequestBody @Valid AuthenticationLogin request) {
+    public ResponseEntity<ResponseAuthentication> login(@RequestBody @Valid LoginAuthentication request) {
         return this.service.login(request);
     }
 

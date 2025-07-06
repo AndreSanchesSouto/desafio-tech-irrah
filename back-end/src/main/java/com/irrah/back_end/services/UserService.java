@@ -1,10 +1,12 @@
 package com.irrah.back_end.services;
 
-import com.irrah.back_end.dtos.authentication.AuthenticationLogin;
-import com.irrah.back_end.dtos.authentication.AuthenticationResponse;
+import com.irrah.back_end.dtos.authentication.LoginAuthentication;
+import com.irrah.back_end.dtos.authentication.ResponseAuthentication;
+import com.irrah.back_end.dtos.chat.RequestChatDto;
 import com.irrah.back_end.dtos.user.PatchUserDto;
 import com.irrah.back_end.dtos.user.RegisterUserDto;
 import com.irrah.back_end.dtos.user.ResponseUserDto;
+import com.irrah.back_end.entities.MessageEntity;
 import com.irrah.back_end.entities.UserEntity;
 import com.irrah.back_end.enums.Role;
 import com.irrah.back_end.enums.UserStatus;
@@ -13,13 +15,15 @@ import com.irrah.back_end.exceptions.UserException;
 import com.irrah.back_end.infrastructure.security.TokenService;
 import com.irrah.back_end.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import java.util.Optional;
-import java.util.UUID;
+
+import java.math.BigDecimal;
+import java.util.*;
 
 @Service
 public class UserService {
@@ -29,6 +33,10 @@ public class UserService {
 
     @Autowired
     private TokenService tokenService;
+
+    @Autowired
+    @Lazy
+    private OrchestratorService orchestratorService;
 
     public ResponseEntity<Void> register(RegisterUserDto request) {
         this.documentValidator(request.document());
@@ -52,7 +60,17 @@ public class UserService {
         user.setRole(role.getRole());
         this.repository.save(user);
 
+        this.orchestratorService.postChat(new RequestChatDto(
+                this.getUserAdminer(),
+                user,
+                new ArrayList<>()
+        ));
+
         return new ResponseEntity<Void>(HttpStatus.OK);
+    }
+
+    public UserEntity getUserAdminer() {
+        return this.repository.findUserAdminer();
     }
 
     public void validateUserDataCreation(RegisterUserDto request, Role role) {
@@ -80,13 +98,13 @@ public class UserService {
         }
     }
 
-    public ResponseEntity<AuthenticationResponse> login(AuthenticationLogin request) {
+    public ResponseEntity<ResponseAuthentication> login(LoginAuthentication request) {
         UserEntity user = findByDocument(request.document());
         String token = tokenService.generateToken(user);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(new AuthenticationResponse(token, new ResponseUserDto(user)));
+                .body(new ResponseAuthentication(token, new ResponseUserDto(user)));
     }
 
     public UserEntity findByDocument(String document) {
@@ -114,7 +132,7 @@ public class UserService {
 
     public ResponseUserDto patch(UUID id, PatchUserDto request) {
         UserEntity user = this.findById(id);
-        UserEntity currentUser = this.getCurrentUser();
+        UserEntity currentUser = this.findCurrentUser();
 
         if(!user.getId().equals(currentUser.getId())) {
             throw new UserException("Você só pode alterar seus próprios dados");
@@ -162,10 +180,29 @@ public class UserService {
 
     }
 
-    public UserEntity getCurrentUser() {
+    public UserEntity findCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String authenticatedUsername = authentication.getName();
         return this.findByName(authenticatedUsername);
     }
 
+    public boolean canPayMessageCost(UserEntity user, MessageEntity message) {
+        boolean canPay = user.getBalance().compareTo(message.getPrice()) >= 0;
+        if(canPay) {
+            BigDecimal actualValue = user.getBalance();
+            user.setBalance(actualValue.subtract(message.getPrice()).toString());
+            this.repository.save(user);
+        }
+        return canPay;
+    }
+
+    public boolean hasMonthLimit(UserEntity user, MessageEntity message) {
+        boolean canPay = user.getMonthLimit().compareTo(message.getPrice()) >= 0;
+        if(canPay) {
+            BigDecimal actualValue = user.getBalance();
+            user.setMonthLimit(actualValue.subtract(message.getPrice()).toString());
+            this.repository.save(user);
+        }
+        return canPay;
+    }
 }

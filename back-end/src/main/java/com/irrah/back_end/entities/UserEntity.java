@@ -44,7 +44,7 @@ public class UserEntity implements UserDetails {
     private String planType;
 
     @Column(nullable = true)
-    private BigDecimal balance;
+    private BigDecimal balance; //prépago
 
     @Column(nullable = true)
     private BigDecimal monthLimit;

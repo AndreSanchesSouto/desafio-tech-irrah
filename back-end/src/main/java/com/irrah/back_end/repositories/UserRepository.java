@@ -25,4 +25,9 @@ public interface UserRepository extends JpaRepository<UserEntity, UUID> {
             SELECT * FROM users WHERE name = :name
             """, nativeQuery = true)
     Optional<UserEntity> findByName(@Param("name") String name);
+
+    @Query(value = """
+            SELECT * FROM users WHERE role = 'adminer'
+            """, nativeQuery = true)
+    UserEntity findUserAdminer();
 }
