@@ -6,7 +6,7 @@ CREATE TABLE users(
     status BOOLEAN NOT NULL,
     plan_type VARCHAR(50) NULL,
     balance NUMERIC(10,2) DEFAULT 0.00,
-    monthly_limit NUMERIC(10,2) DEFAULT 0.00,
+    month_limit NUMERIC(10,2) DEFAULT 0.00,
     created_dt TIMESTAMP NOT NULL,
     removed_dt TIMESTAMP NULL
 )

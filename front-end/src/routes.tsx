@@ -1,13 +1,13 @@
 import { createBrowserRouter } from "react-router-dom";
-import Login from "./pages/login";
+import Auth from "./pages/auth";
 import BCB from "./pages";
 import Chats from "./pages/chats";
 import UserChat from "./components/userChat";
 
 export const routes = createBrowserRouter([
     {
-        path: '/login',
-        element: <Login />
+        path: '/auth',
+        element: <Auth />
     },
     {
         path: '/',

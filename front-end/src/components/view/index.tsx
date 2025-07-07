@@ -1,14 +1,14 @@
-import Userbar from "../userbar"
+import Userbar from "../userbar";
 
 interface Props {
-    children?: React.ReactNode
+    children?: React.ReactNode;
 }
 
 export default function View({ children }: Props) {
     return (
-        <div>
+        <div className="h-full flex flex-col">
             <Userbar />
-            <div>{children}</div>
+            <div className="h-full">{children}</div>
         </div>
     )
 }

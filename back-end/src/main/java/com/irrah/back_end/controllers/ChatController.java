@@ -23,4 +23,9 @@ public class ChatController {
         return ResponseEntity.status(HttpStatus.OK).body(service.getChats());
     }
 
+    @GetMapping("/common-user")
+    public ResponseEntity<ResponseGenericChatDto> getCommonChat() {
+        return ResponseEntity.status(HttpStatus.OK).body(service.getCommonChat());
+    }
+
 }

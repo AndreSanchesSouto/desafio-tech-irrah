@@ -28,6 +28,7 @@ public class ChatEntity {
     @JoinColumn(name = "user_common_id", nullable = false)
     private UserEntity userCommon;
 
+    @Setter
     @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MessageEntity> messages = new ArrayList<>();
 

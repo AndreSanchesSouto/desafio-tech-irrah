@@ -9,6 +9,7 @@ import java.util.UUID;
 public record ResponseUserDto(
         UUID id,
         String name,
+        String role,
         String documentId,
         String documentType,
         BigDecimal balance,
@@ -20,6 +21,7 @@ public record ResponseUserDto(
         this(
                 user.getId(),
                 user.getName(),
+                user.getRole().toLowerCase(),
                 user.getDocument(),
                 detectDocumentType(user.getDocument()),
                 user.getBalance(),
