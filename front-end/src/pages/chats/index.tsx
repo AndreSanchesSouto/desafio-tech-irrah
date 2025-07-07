@@ -8,35 +8,60 @@ import useAxiosConfiguration from "../../utils/axiosFetcher";
 import type ResponseGenericChat from "../../utils/interfaces";
 import { getUser } from "../../utils/getUser";
 import { Role } from "../../utils/enums";
+import { useState } from "react";
 
 export default function Chats() {
     const fetcher = useAxiosConfiguration();
-    const { data: chats } = useSWR<ResponseGenericChat[] >(
+    const { data: chats } = useSWR<ResponseGenericChat[]>(
         `${API_URL}/chats`,
         fetcher
     );
+    const [showChat, setShowChat] = useState(false)
 
     return (
         <View>
             <div className="flex relative h-full">
+                {getUser()?.role === Role.ADMINER &&
+                    showChat &&
+                    <>
+                        <div className="max-w-60 w-full h-full overflow-y-auto bg-neutral-100 border-r-2 border-violet-200 hidden md:flex flex-col">
+                            {
+                                chats?.map((chat: ResponseGenericChat) => {
+                                    return (chat &&
+                                        <div key={chat.id}
+                                            onClick={() => setShowChat(!showChat)}
+                                        >
+                                            <Chatcard {...chat} />
+                                        </div>
+                                    )
+                                })
+                            }
+                        </div>
+                        <div className="max-w-60 w-full h-full overflow-y-auto bg-neutral-100 border-r-2 border-violet-200 md:hidden flex flex-col absolute z-10">
+                            {
+                                chats?.map((chat: ResponseGenericChat) => {
+                                    return (chat &&
+                                        <div key={chat.id}
+                                            onClick={() => setShowChat(!showChat)}
+                                        >
+                                            <Chatcard {...chat} />
+                                        </div>
+                                    )
+                                })
+                            }
+                        </div>
+                    </>
+                }
                 { getUser()?.role === Role.ADMINER &&
-                    <div className="max-w-60 w-full h-full overflow-y-auto bg-neutral-100 border-r-2 border-violet-200">
-                        {
-                            chats?.map((chat: ResponseGenericChat) => {
-                                return (chat &&
-                                    <div key={chat.id}>
-                                        <Chatcard {...chat} />
-                                    </div>
-                                )
-                            })
-                        }
+                    <div className="relative z-10">
+                        <button
+                            className="absolute bottom-3 left-3 h-12 w-12 items-center flex justify-center rounded-full bg-violet-500 text-neutral-100 hover:cursor-pointer hover:bg-violet-400 hover:text-white transition-all"
+                            onClick={() => setShowChat(!showChat)}
+                        >
+                            <MessageCircle size={30} />
+                        </button>
                     </div>
                 }
-                <div className="relative">
-                    <button className="absolute bottom-3 left-3 h-12 w-12 items-center flex justify-center rounded-full bg-violet-500 text-neutral-100 hover:cursor-pointer hover:bg-violet-400 hover:text-white transition-all">
-                        <MessageCircle size={30} />
-                    </button>
-                </div>
                 <Outlet />
             </div>
         </View>

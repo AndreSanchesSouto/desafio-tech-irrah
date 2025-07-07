@@ -5,6 +5,8 @@ import useAxiosConfiguration from "../../utils/axiosFetcher";
 import type MessageChat from "../../utils/interfaces";
 import { getUser } from "../../utils/getUser";
 import { useEffect, useRef } from "react";
+import { MessageState } from "../../utils/enums";
+import { CircleArrowOutUpRight, CircleCheck, CircleUserRound, CircleX, Clock, RefreshCcw } from "lucide-react";
 
 export default function Messages() {
     const fetcher = useAxiosConfiguration();
@@ -24,20 +26,19 @@ export default function Messages() {
     }
 
     return (
-        <div className="w-full h-full flex flex-col gap-3 p-1">
+        <div className="w-full h-full flex flex-col p-1 absolute">
             {
                 chats?.map((messageEntity: MessageChat) => (
-                    <div
-                    key={messageEntity.id} 
-                    className={`resize-none flex py-2 rounded-md
+                    <div key={messageEntity.id}
+                        className={`resize-none flex py-2 rounded-md
                             ${isMyMessage(messageEntity) ?
-                            ' justify-end pr-5' :
-                            ' pl-5'
-                        }    
-                        `}
+                                ' justify-end pr-5' :
+                                ' pl-5'
+                            }    
+                            `}
                     >
-                        <MessageTextarea 
-                            messageEntity={messageEntity} 
+                        <MessageTextarea
+                            messageEntity={messageEntity}
                             isMyMessage={isMyMessage}
                         />
 
@@ -53,7 +54,7 @@ interface PropsMessage {
     isMyMessage: (messageEntity: MessageChat) => boolean
 }
 
-function MessageTextarea({ messageEntity, isMyMessage } : PropsMessage) {
+function MessageTextarea({ messageEntity, isMyMessage }: PropsMessage) {
     const textareaRef = useRef<HTMLTextAreaElement>(null);
 
     useEffect(() => {
@@ -64,17 +65,34 @@ function MessageTextarea({ messageEntity, isMyMessage } : PropsMessage) {
     }, [messageEntity.message]);
 
     return (
-        <textarea
-            ref={textareaRef}
-            className={`resize-none py-2 rounded-md max-w-[30rem] px-2 text-justify overflow-hidden
-            ${isMyMessage(messageEntity)
-                ? 'bg-violet-400/60 justify-end'
-                : 'bg-violet-400'}
-            `}
-            disabled
-            rows={1}
-            value={messageEntity.message}
-            readOnly
-        />
+        <div className="items-center relative flex">
+            <div className="absolute -left-5">
+                {messageStatus(messageEntity.status)}
+            </div>
+            <textarea
+                ref={textareaRef}
+                className={`resize-none py-2 rounded-md max-w-[30rem] px-2 text-justify overflow-hidden
+                ${isMyMessage(messageEntity)
+                        ? 'bg-violet-400/60 justify-end'
+                        : 'bg-violet-400'}
+                    `}
+                disabled
+                rows={1}
+                value={messageEntity.message}
+                readOnly
+            />
+        </div>
     );
+}
+
+function messageStatus(status: string) {
+    switch (status.toLocaleLowerCase()) {
+        case MessageState.QUEUED: return <Clock size={14} strokeWidth={3} />
+        case MessageState.PROCESSING: return <RefreshCcw size={14} strokeWidth={3} />
+        case MessageState.SENT: return <CircleCheck size={14} strokeWidth={3} />
+        case MessageState.DELIVERED: return <CircleArrowOutUpRight size={14} strokeWidth={3} />
+        case MessageState.READ: return <CircleUserRound size={14} strokeWidth={3} />
+        case MessageState.FAILED: return <CircleX size={14} strokeWidth={3} />
+        default: return "Desconecido";
+    }
 }

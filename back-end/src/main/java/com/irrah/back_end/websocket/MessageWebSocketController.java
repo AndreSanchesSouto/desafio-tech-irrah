@@ -7,7 +7,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 
 @Controller
-@EnableWebSocketMessageBroker
 public class MessageWebSocketController {
 
     private final SimpMessagingTemplate messagingTemplate;
@@ -17,7 +16,7 @@ public class MessageWebSocketController {
     }
 
     public void sendMessageStatusUpdate(ResponseMessageDto messageDto) {
-        // Envia o status para todos os clientes inscritos
+        System.out.println("Enviando atualização de mensagem via WebSocket: " + messageDto);
         messagingTemplate.convertAndSend("/topic/messages", messageDto);
     }
 }

@@ -1,32 +1,23 @@
 import { Client } from '@stomp/stompjs';
-import SockJS from 'sockjs-client';
-import { useEffect } from 'react';
+
 
 export function WebSocketStatusListener() {
-    useEffect(() => {
-        const socket = new SockJS('http://localhost:8080/ws');
-        const stompClient = new Client({
-            webSocketFactory: () => socket,
-            debug: str => console.log(str),
-            reconnectDelay: 5000,
-        });
-
-        stompClient.onConnect = () => {
-            console.log('Connected to WebSocket');
+    const stompClient = new Client({
+        brokerURL: 'ws://localhost:8080/ws',
+        debug: str => console.log('STOMP DEBUG:', str),
+        reconnectDelay: 5000,
+        onConnect: () => {
+            console.log('✅ Connected to WebSocket');
             stompClient.subscribe('/topic/messages', (message) => {
                 const body = JSON.parse(message.body);
-                console.log(body);
-                console.log('messages');
-                // Aqui você pode atualizar o estado do React para exibir no frontend
+                console.log('📥 Mensagem recebida:', body);
             });
-        };
-
-        stompClient.activate();
-
-        return () => {
-            stompClient.deactivate();
-        };
-    }, []);
+        },
+        onStompError: (frame) => {
+            console.error('💥 STOMP ERROR:', frame.headers['message']);
+            console.error(frame.body);
+        },
+    });
 
     return <></>;
 }
