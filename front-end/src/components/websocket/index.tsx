@@ -15,7 +15,8 @@ export function WebSocketStatusListener() {
             console.log('Connected to WebSocket');
             stompClient.subscribe('/topic/messages', (message) => {
                 const body = JSON.parse(message.body);
-                console.log('Status update:', body);
+                console.log(body);
+                console.log('messages');
                 // Aqui você pode atualizar o estado do React para exibir no frontend
             });
         };

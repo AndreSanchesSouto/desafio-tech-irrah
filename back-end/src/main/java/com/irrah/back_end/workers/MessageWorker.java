@@ -42,8 +42,10 @@ public class MessageWorker {
                     webSocketController.sendMessageStatusUpdate(new ResponseMessageDto(message));
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
-                }
-            }
+                } catch (Exception e) {
+                System.out.println("Erro no processamento da mensagem: " + e.getMessage());
+                // aqui você pode até logar em um sistema de monitoramento
+            }}
         });
         workerThread.start();
     }

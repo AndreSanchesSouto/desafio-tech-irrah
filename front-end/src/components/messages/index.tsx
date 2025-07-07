@@ -1,4 +1,4 @@
-import useSWR from "swr";
+import useSWR, { mutate } from "swr";
 import { API_URL } from "../../utils/configs";
 import { useParams } from "react-router-dom";
 import useAxiosConfiguration from "../../utils/axiosFetcher";
@@ -14,6 +14,10 @@ export default function Messages() {
         `${API_URL}/messages/${chatId}`,
         fetcher
     );
+
+    useEffect(() => {
+        mutate(`${API_URL}/messages/${chatId}`)
+    })
 
     function isMyMessage(messageEntity: MessageChat): boolean {
         return messageEntity.senderId == getUser()?.id

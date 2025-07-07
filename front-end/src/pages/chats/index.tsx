@@ -16,7 +16,6 @@ export default function Chats() {
         fetcher
     );
 
-
     return (
         <View>
             <div className="flex relative h-full">
