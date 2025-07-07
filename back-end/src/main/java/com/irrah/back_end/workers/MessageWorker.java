@@ -4,6 +4,7 @@ import com.irrah.back_end.entities.MessageEntity;
 import com.irrah.back_end.entities.UserEntity;
 import com.irrah.back_end.enums.MessageStatus;
 import com.irrah.back_end.enums.PlanType;
+import com.irrah.back_end.exceptions.MessageException;
 import com.irrah.back_end.queue.MessageQueue;
 import com.irrah.back_end.repositories.MessageRepository;
 import com.irrah.back_end.services.MessageService;
@@ -30,23 +31,15 @@ public class MessageWorker {
             while (true) {
                 try {
                     MessageEntity message = messageQueue.dequeue();
-
                     this.setProcessingMessageStatus(message);
                     webSocketController.sendMessageStatusUpdate(new ResponseMessageDto(message));
+
                     // Simula envio da mensagem
-                    Thread.sleep(2000); // tempo de processamento
+                    Thread.sleep(2000);
 
-                    UserEntity sender = message.getUserSender();
-                    if (sender.getPlanType().equals(PlanType.PREPAID.getPlanType())) {
-                        this.messageService.handlePrepaidMessage(sender, message);
-                    } else {
-                        this.messageService.handlePostpaidMessage(sender, message);
-                    }
-                    messageService.patchMessageStatus(message.getId(), message.getStatus());
+                    this.setMessageStatus(message);
 
-                    // Aqui você pode emitir um WebSocket para notificar o cliente
                     webSocketController.sendMessageStatusUpdate(new ResponseMessageDto(message));
-
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                 }
@@ -55,10 +48,25 @@ public class MessageWorker {
         workerThread.start();
     }
 
+    private void setMessageStatus(MessageEntity message) {
+        UserEntity sender = message.getUserSender();
+
+        if(sender.getPlanType() == null) throw new MessageException("Selecione um plano para enviar uma mensagem");
+
+        if (sender.getPlanType().equals(PlanType.PREPAID.getPlanType())) {
+            this.messageService.handlePrepaidMessage(sender, message);
+        } else {
+            this.messageService.handlePostpaidMessage(sender, message);
+        }
+        System.out.println("message up");
+        System.out.println(message);
+        messageService.patchMessageStatus(message, message.getStatus());
+    }
+
     private void setProcessingMessageStatus(MessageEntity message) {
         System.out.println("Processando: " + message.getText());
         message.setStatus(MessageStatus.PROCESSING.getStatus());
-        messageService.patchMessageStatus(message.getId(), message.getStatus());
+        messageService.patchMessageStatus(message, message.getStatus());
     }
 
 }

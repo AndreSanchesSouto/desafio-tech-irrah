@@ -5,6 +5,7 @@ import com.irrah.back_end.enums.MessageType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -14,6 +15,7 @@ import java.util.UUID;
 @Setter
 @Getter
 @Table(name = "messages")
+@ToString
 public class MessageEntity {
 
     @Id

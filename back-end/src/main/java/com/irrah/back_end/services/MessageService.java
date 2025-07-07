@@ -60,9 +60,9 @@ public class MessageService {
         }
     }
 
-    public void patchMessageStatus(UUID id, String status) {
-        MessageEntity message = this.findById(id);
-
+    public void patchMessageStatus(MessageEntity message, String status) {
+        System.out.println(message.toString());
+        System.out.println("message.toString()");
         message.setStatus(MessageStatus.valueOf(status.toUpperCase()).getStatus());
         this.repository.save(message);
     }
