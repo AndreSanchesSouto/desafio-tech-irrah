@@ -3,6 +3,8 @@ import { useState } from "react";
 import api from "../../utils/api";
 import { API_URL, getHeaders } from "../../utils/configs";
 import { useParams } from "react-router-dom";
+import { WebSocketStatusListener } from "../websocket";
+import Messages from "../messages";
 
 export default function UserChat() {
     const [message, setMessage] = useState("");
@@ -23,10 +25,10 @@ export default function UserChat() {
 
     return (
         <div className="h-full w-full flex flex-col bg-neutral-50">
-            <div className="">
-                
+            <div className="flex justify-end items-end h-full">
+                <Messages />
             </div>
-            <div className="mb-3 h-full">
+            <div className="mb-3">
                 <div className="w-full flex justify-center items-end h-full px-16 pb-1">
                     <input className="bg-violet-200 text-lg flex w-full px-5 py-1 rounded-lg placeholder:text-violet-400 text-violet-900"
                     type="text" 
@@ -40,6 +42,7 @@ export default function UserChat() {
                     <SendHorizonal />
                 </button>
             </div>
+            <WebSocketStatusListener />
         </div>
     )
 } 

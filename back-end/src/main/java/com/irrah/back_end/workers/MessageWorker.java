@@ -42,7 +42,7 @@ public class MessageWorker {
                     } else {
                         this.messageService.handlePostpaidMessage(sender, message);
                     }
-                    messageService.patchMessageStatus(message.getId(), MessageStatus.valueOf(message.getStatus()));
+                    messageService.patchMessageStatus(message.getId(), message.getStatus());
 
                     // Aqui você pode emitir um WebSocket para notificar o cliente
                     webSocketController.sendMessageStatusUpdate(new ResponseMessageDto(message));
@@ -58,7 +58,7 @@ public class MessageWorker {
     private void setProcessingMessageStatus(MessageEntity message) {
         System.out.println("Processando: " + message.getText());
         message.setStatus(MessageStatus.PROCESSING.getStatus());
-        messageService.patchMessageStatus(message.getId(), MessageStatus.valueOf(message.getStatus()));
+        messageService.patchMessageStatus(message.getId(), message.getStatus());
     }
 
 }

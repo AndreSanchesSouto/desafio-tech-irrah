@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -59,9 +60,10 @@ public class MessageService {
         }
     }
 
-    public void patchMessageStatus(UUID id, MessageStatus status) {
+    public void patchMessageStatus(UUID id, String status) {
         MessageEntity message = this.findById(id);
-        message.setStatus(status.getStatus());
+
+        message.setStatus(MessageStatus.valueOf(status.toUpperCase()).getStatus());
         this.repository.save(message);
     }
 
@@ -102,7 +104,7 @@ public class MessageService {
 
     public void handlePrepaidMessage(UserEntity user, MessageEntity message) {
         if (this.orchestratorService.userCanPayMessageCost(user, message)) {
-            message.setStatus(MessageStatus.QUEUED.getStatus());
+            message.setStatus(MessageStatus.DELIVERED.getStatus());
         } else {
             message.setStatus(MessageStatus.FAILED.getStatus());
         }
@@ -110,9 +112,21 @@ public class MessageService {
 
     public void handlePostpaidMessage(UserEntity user, MessageEntity message) {
         if (this.orchestratorService.userHasMonthLimit(user, message)) {
-            message.setStatus(MessageStatus.QUEUED.getStatus());
+            message.setStatus(MessageStatus.DELIVERED.getStatus());
         } else {
             message.setStatus(MessageStatus.FAILED.getStatus());
         }
+    }
+
+    public List<ResponseMessageDto> getMessages(UUID chatId) {
+        return this.findByChatId(chatId);
+    }
+
+    private List<ResponseMessageDto> findByChatId(UUID chatId) {
+        List<MessageEntity> messages =  this.repository.findByChatId(chatId);
+        return messages
+                .stream()
+                .map(ResponseMessageDto::new)
+                .toList();
     }
 }

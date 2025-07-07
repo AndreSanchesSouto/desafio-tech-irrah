@@ -24,3 +24,14 @@ export default interface ResponseGenericChat {
     lastMessageTime: string;
     number: number;
 }
+
+export default interface MessageChat {
+    id: string;
+    status: string;
+    senderId: string;
+    message: string;
+    timestamp: string;
+    estimatedDelivery: string;
+    cost: number;
+    currentBalance: number;
+}

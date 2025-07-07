@@ -9,6 +9,8 @@ import java.util.UUID;
 public record ResponseMessageDto(
         UUID id,
         String status,
+        String message,
+        UUID senderId,
         LocalDate timestamp,
         String estimatedDelivery,
         BigDecimal cost,
@@ -18,6 +20,8 @@ public record ResponseMessageDto(
        this(
                message.getId(),
                message.getStatus(),
+               message.getText(),
+               message.getUserSender().getId(),
                message.getCreatedAt(),
                "don't knmow",
                message.getPrice(),
@@ -29,6 +33,8 @@ public record ResponseMessageDto(
         this(
                 message.getId(),
                 message.getStatus(),
+                message.getText(),
+                message.getUserSender().getId(),
                 message.getCreatedAt(),
                 "don't knmow",
                 message.getPrice(),

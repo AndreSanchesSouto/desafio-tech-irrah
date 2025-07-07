@@ -1,10 +1,12 @@
 package com.irrah.back_end.repositories;
 
+import com.irrah.back_end.dtos.message.ResponseMessageDto;
 import com.irrah.back_end.entities.MessageEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface MessageRepository extends JpaRepository<MessageEntity, UUID> {
@@ -16,4 +18,12 @@ public interface MessageRepository extends JpaRepository<MessageEntity, UUID> {
             ORDER BY m.created_at
             """, nativeQuery = true)
     MessageEntity findLastMessageFromUser(@Param("userId") UUID userId);
+
+    @Query(value = """
+            SELECT m.* FROM messages m
+            JOIN chats c ON c.id = m.chat_id
+            WHERE m.status LIKE '%delivered%'
+            AND c.id = :chatId
+            """, nativeQuery = true)
+    List<MessageEntity> findByChatId(@Param("chatId") UUID chatId);
 }
