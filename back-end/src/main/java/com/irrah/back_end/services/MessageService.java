@@ -9,6 +9,8 @@ import com.irrah.back_end.enums.MessagePriority;
 import com.irrah.back_end.enums.MessageStatus;
 import com.irrah.back_end.enums.PlanType;
 import com.irrah.back_end.exceptions.MessageException;
+import com.irrah.back_end.exceptions.QueueException;
+import com.irrah.back_end.queue.MessageQueue;
 import com.irrah.back_end.repositories.MessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -26,6 +28,10 @@ public class MessageService {
     @Lazy
     private OrchestratorService orchestratorService;
 
+    @Autowired
+    private MessageQueue messageQueue;
+
+
     public MessageEntity getLastMessageFromUser(UUID userId) {
         return this.repository.findLastMessageFromUser(userId);
     }
@@ -36,15 +42,42 @@ public class MessageService {
         UserEntity receiver = selectReceiver(chat, sender.getId());
         MessageEntity message = createBaseMessage(request, sender, receiver);
 
+
+        message.setStatus(MessageStatus.QUEUED.getStatus());
+        message.setChat(chat);
+        this.repository.save(message);
+        this.orchestratorService.chatSetNewMassage(chat.getId(), message);
+        this.enqueueMessage(message);
+        return new ResponseMessageDto(message);
+    }
+
+    public void defineMessageStatus(MessageEntity message, UserEntity sender) {
         if (sender.getPlanType().equals(PlanType.PREPAID.getPlanType())) {
             handlePrepaidMessage(sender, message);
         } else {
             handlePostpaidMessage(sender, message);
         }
-        message.setChat(chat);
+    }
+
+    public void patchMessageStatus(UUID id, MessageStatus status) {
+        MessageEntity message = this.findById(id);
+        message.setStatus(status.getStatus());
         this.repository.save(message);
-        this.orchestratorService.chatSetNewMassage(chat.getId(), message);
-        return new ResponseMessageDto(message);
+    }
+
+    public MessageEntity findById(UUID id) {
+        return this.repository.findById(id).orElseThrow(
+                () -> new MessageException("Mensagem não encontradaa")
+        );
+    }
+
+    private void enqueueMessage(MessageEntity message) {
+        try {
+            messageQueue.enqueue(message);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new QueueException("Erro ao enfileirar mensagem " + e);
+        }
     }
 
     private UserEntity selectReceiver(ChatEntity chat, UUID senderId) {
@@ -67,7 +100,7 @@ public class MessageService {
         return message;
     }
 
-    private void handlePrepaidMessage(UserEntity user, MessageEntity message) {
+    public void handlePrepaidMessage(UserEntity user, MessageEntity message) {
         if (this.orchestratorService.userCanPayMessageCost(user, message)) {
             message.setStatus(MessageStatus.QUEUED.getStatus());
         } else {
@@ -75,7 +108,7 @@ public class MessageService {
         }
     }
 
-    private void handlePostpaidMessage(UserEntity user, MessageEntity message) {
+    public void handlePostpaidMessage(UserEntity user, MessageEntity message) {
         if (this.orchestratorService.userHasMonthLimit(user, message)) {
             message.setStatus(MessageStatus.QUEUED.getStatus());
         } else {
