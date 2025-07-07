@@ -1,21 +1,25 @@
 import { User } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
+import type ResponseGenericChat from "../../utils/interfaces";
 
-export default function Chatcard() {
-
-    const navigate = useNavigate()
+export default function Chatcard({...props}: ResponseGenericChat) {
 
     return (
-        <div className="w-full flex hover:rounded-sm gap-2 p-2 bg-neutral-50 hover:text-violet-600 hover:bg-violet-50 items-center h-scren"
-            onClick={() => navigate(`/chats/1`)}
+        <NavLink 
+        className={({ isActive }) =>
+            isActive ? 
+        'text-violet-800 bg-violet-200 flex hover:rounded-sm gap-2 p-2 items-center cursor-pointer' : 
+        'bg-neutral-50 hover:text-violet-600 hover:bg-violet-50 w-full flex hover:rounded-sm gap-2 p-2 items-center cursor-pointer'
+        }
+            to={`/chats/${props.id}`}
         >
             <div>
                 <User />
             </div>
             <div className="flex flex-col">
-                <p className="font-medium">usename</p>
-                <p className="text-xs">user_nick</p>
+                <p className="font-medium">{props.recipientName}</p>
+                <p className="text-xs">{props.id}</p>
             </div>
-        </div>
+        </NavLink>
     )
 } 

@@ -109,7 +109,7 @@ public class UserService {
 
     public UserEntity findByDocument(String document) {
         return repository.findByDocument(document).orElseThrow(
-                () -> new UserException("Núemero de documento não encontrado")
+                () -> new UserException("Documento não encontrado")
         );
     }
 
