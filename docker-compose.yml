@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./back-end
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://ep-bitter-bread-ae7diwlz-pooler.c-2.us-east-2.aws.neon.tech/neondb?sslmode=require
+      SPRING_DATASOURCE_USERNAME: neondb_owner
+      SPRING_DATASOURCE_PASSWORD: npg_GWX6U5nmSIuD
+
+  frontend:
+    build:
+      context: ./front-end
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+
