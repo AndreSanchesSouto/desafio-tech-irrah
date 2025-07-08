@@ -53,14 +53,6 @@ public class MessageService {
         return new ResponseMessageDto(message);
     }
 
-    public void defineMessageStatus(MessageEntity message, UserEntity sender) {
-        if (sender.getPlanType().equals(PlanType.PREPAID.getPlanType())) {
-            handlePrepaidMessage(sender, message);
-        } else {
-            handlePostpaidMessage(sender, message);
-        }
-    }
-
     public void patchMessageStatus(MessageEntity message, String status) {
         message.setStatus(MessageStatus.valueOf(status.toUpperCase()).getStatus());
         this.repository.save(message);
@@ -95,23 +87,15 @@ public class MessageService {
         message.setPriorityLevel(priority.getType());
         message.setPrice(priority.getPrice());
         message.setText(request.content());
-        message.setType(request.userPlanType().getPlanType());
+        message.setType(this.orchestratorService.findCurrentUser().getPlanType());
         message.setUserReceiver(receiver);
         message.setUserSender(sender);
 
         return message;
     }
 
-    public void handlePrepaidMessage(UserEntity user, MessageEntity message) {
+    public void handlePaymentMessage(UserEntity user, MessageEntity message) {
         if (this.orchestratorService.userCanPayMessageCost(user, message)) {
-            message.setStatus(MessageStatus.DELIVERED.getStatus());
-        } else {
-            message.setStatus(MessageStatus.FAILED.getStatus());
-        }
-    }
-
-    public void handlePostpaidMessage(UserEntity user, MessageEntity message) {
-        if (this.orchestratorService.userHasMonthLimit(user, message)) {
             message.setStatus(MessageStatus.DELIVERED.getStatus());
         } else {
             message.setStatus(MessageStatus.FAILED.getStatus());

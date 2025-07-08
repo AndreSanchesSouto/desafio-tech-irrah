@@ -12,7 +12,5 @@ public record RequestMessageDto(
         @NotBlank(message = "Envie alguma mensagem")
         String content,
         @NotNull(message = "Selecione o tipo de mensagem que deseja")
-        String priority,
-        @NotNull(message = "Selecione entre PREPAGO ou POSPAGO")
-        PlanType userPlanType
+        String priority
 ) { }

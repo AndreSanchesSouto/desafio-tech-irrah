@@ -3,8 +3,6 @@ import { getUser } from "../../utils/getUser";
 import { useState } from "react";
 import { NavLink, useNavigate, useParams } from "react-router-dom";
 import { Role } from "../../utils/enums";
-import api from "../../utils/api";
-import { API_URL, getHeaders } from "../../utils/configs";
 
 export default function Topbar() {
     const [showButton, setShowButton] = useState(false);
@@ -36,7 +34,7 @@ export default function Topbar() {
                     <User />
                 </div>
                 {showButton &&
-                    <div className="text-violet-500 h-auto justify-start absolute flex flex-col bg-neutral-50 right-2 top-11 border-4 border-violet-500 rounded-md cursor-pointer">
+                    <div className="text-violet-500 h-auto justify-start absolute flex flex-col bg-neutral-50 right-2 top-11 border-2 border-violet-500 rounded-md cursor-pointer">
                         <div className="flex gap-1 items-center px-3 hover:bg-violet-100 py-1"
                             onClick={gotToChats}
                         >

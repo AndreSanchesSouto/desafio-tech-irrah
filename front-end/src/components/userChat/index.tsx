@@ -12,14 +12,15 @@ export default function UserChat() {
     const [message, setMessage] = useState("");
     const { id } = useParams()
     const [urgent, setUrgent] = useState(false)
+    const[tempMessages, setTempMessages] = useState<string[]>([])
 
-    function handleSendMessage() {
+    function handleSendMessage(event: React.FormEvent) {
+        event.preventDefault()
+        setTempMessages(prev => [...prev, message])
         const data = {
             conversationId: id,
-            recipientId: "2359f629-5b67-4fbd-8f0d-0be6dc8ff645",
             content: message,
             priority: urgent ? "URGENT" : "NORMAL",
-            userPlanType: getUser()?.planType?.toUpperCase()
         };
 
         api.post(`${API_URL}/messages`, data, getHeaders())
@@ -28,13 +29,15 @@ export default function UserChat() {
     return (
         <div className="h-full w-full flex flex-col bg-neutral-50">
             <div className="flex justify-end items-end h-full overflow-auto relative">
-                <Messages />
+                <Messages tempMessages={tempMessages}/>
             </div>
             <div className="mb-3 bg-transparent">
                 <div className={`w-full flex justify-center items-end h-full pb-1
                     ${getUser()?.role === Role.ADMINER ? 'px-16' : 'pr-16 pl-3'}
                     `}>
-                    <label className="flex items-center relative w-full">
+                    <form id="textMessage" className="flex items-center relative w-full"
+                        onSubmit={handleSendMessage}
+                    >
                         <input className="bg-violet-200 text-lg flex w-full px-5 py-1 rounded-lg placeholder:text-violet-400 text-violet-900"
                             type="text"
                             placeholder="Digite sua mensagem..."
@@ -45,13 +48,11 @@ export default function UserChat() {
                         `}
                             onClick={() => setUrgent(!urgent)}
                         >
-                            <AlertCircle strokeWidth={2}/>
+                            <AlertCircle strokeWidth={2} />
                         </div>
-                    </label>
+                    </form>
                 </div>
-                <button className="absolute bottom-3 right-3 h-12 w-12 items-center flex justify-center rounded-full bg-violet-500 text-neutral-100 hover:cursor-pointer hover:bg-violet-400 hover:text-white transition-all"
-                    onClick={handleSendMessage}
-                >
+                <button form="textMessage" className="absolute bottom-3 right-3 h-12 w-12 items-center flex justify-center rounded-full bg-violet-500 text-neutral-100 hover:cursor-pointer hover:bg-violet-400 hover:text-white transition-all">
                     <SendHorizonal />
                 </button>
             </div>

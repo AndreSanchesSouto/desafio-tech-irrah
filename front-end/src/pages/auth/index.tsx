@@ -6,7 +6,6 @@ import { API_URL, getHeaders } from "../../utils/configs";
 import { useHookFormMask } from "use-mask-input";
 import type { Auth } from "../../utils/interfaces";
 import toast, { Toaster } from "react-hot-toast";
-import useUserStore from "../../utils/store/store";
 import { Role } from "../../utils/enums";
 import BCB_LOGO from "../../../public/BCB.png"
 
@@ -15,7 +14,6 @@ export default function Auth() {
     const [showLoad, setShowLoad] = useState(false);
     const mask = useHookFormMask(register);
     const [login, setLogin] = useState(true)
-    const setUser = useUserStore(state => state.setUser);
 
     async function handleSubmitLogin() {
         if (showLoad) return;

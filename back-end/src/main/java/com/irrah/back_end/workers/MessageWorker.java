@@ -58,11 +58,8 @@ public class MessageWorker {
             throw new MessageException("Selecione um plano para enviar uma mensagem");
         }
 
-        if (sender.getPlanType().equals(PlanType.PREPAID.getPlanType())) {
-            this.messageService.handlePrepaidMessage(sender, message);
-        } else {
-            this.messageService.handlePostpaidMessage(sender, message);
-        }
+        this.messageService.handlePaymentMessage(sender, message);
+
         messageService.patchMessageStatus(message, message.getStatus());
     }
 

@@ -14,8 +14,8 @@ public interface PaymentRepository extends JpaRepository<PaymentEntity, UUID> {
             SELECT p.* FROM payments p
             JOIN users u ON u.id = p.client_id
             WHERE u.id = :userId
+            ORDER BY p.created_at DESC
             """, nativeQuery = true)
     List<PaymentEntity> findByUserId(@Param("userId") UUID userId);
 
 }
-    

@@ -198,12 +198,5 @@ public class UserService {
         return canPay;
     }
 
-    public boolean hasMonthLimit(UserEntity user, MessageEntity message) {
-        boolean canPay = user.getMonthLimit().compareTo(message.getPrice()) >= 0;
-        if(canPay) {
-            this.paymentService.post(user, message);
-            this.repository.save(user);
-        }
-        return canPay;
-    }
+
 }

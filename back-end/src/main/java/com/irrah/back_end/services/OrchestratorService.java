@@ -33,14 +33,6 @@ public class OrchestratorService {
         return userService.canPayMessageCost(user, message);
     }
 
-    public boolean userHasMonthLimit(UserEntity user, MessageEntity message) {
-        return userService.hasMonthLimit(user, message);
-    }
-
-    public UserEntity userFindById(UUID id) {
-        return userService.findById(id);
-    }
-
     public ChatEntity chatGetById(UUID id) {
         return chatService.findById(id);
     }
