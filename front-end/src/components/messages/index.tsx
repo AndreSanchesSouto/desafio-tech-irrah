@@ -1,4 +1,4 @@
-import useSWR, { mutate } from "swr";
+import useSWR from "swr";
 import { API_URL, getHeaders } from "../../utils/configs";
 import { useParams } from "react-router-dom";
 import useAxiosConfiguration from "../../utils/axiosFetcher";
