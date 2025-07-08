@@ -66,9 +66,9 @@ export function Settings() {
         const planType = watch('planType');
 
         if (planType === 'postpaid') {
-            setValue('number', user?.number || ''); // seta o valor original vindo do backend
+            setValue('number', user?.number || '');
         } else if (planType === 'prepaid') {
-            setValue('balance', user?.balance || ''); // seta o valor original vindo do backend
+            setValue('balance', user?.balance || '');
         }
     }, [watch('planType'), user, setValue]);
 
