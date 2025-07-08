@@ -64,10 +64,10 @@ export default function Chats() {
             <Outlet />
             {!id &&
                 <div className="items-center justify-center flex flex-col w-full">
-                    <div className="w-[40rem] h-auto ">
+                    <div className="max-w-[40rem] w-full h-auto ">
                         <img src={CHAT_SVG} alt="" />
                     </div>
-                    <p className="text-3xl font-black text-violet-800">SELECIONE UM CHAT PARA COMEÇAR</p>
+                    <p className="text-xl sm:text-2xl md:text-3xl font-black text-violet-800 text-center">SELECIONE UM CHAT PARA COMEÇAR</p>
                 </div>
             }
         </div>
