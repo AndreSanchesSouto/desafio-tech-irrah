@@ -1,6 +1,7 @@
 package com.irrah.back_end.controllers;
 
 import com.irrah.back_end.dtos.message.RequestMessageDto;
+import com.irrah.back_end.dtos.message.RequestMessagesToCheckDto;
 import com.irrah.back_end.dtos.message.ResponseMessageDto;
 import com.irrah.back_end.services.MessageService;
 import jakarta.validation.Valid;
@@ -29,4 +30,8 @@ public class MessageController {
         return ResponseEntity.status(HttpStatus.OK).body(this.service.getMessages(chatId));
     }
 
+    @PostMapping("/read")
+    public ResponseEntity<List<ResponseMessageDto>> readMessages(@RequestBody RequestMessagesToCheckDto messages) {
+        return ResponseEntity.status(HttpStatus.OK).body(this.service.markAsRead(messages));
+    }
 }

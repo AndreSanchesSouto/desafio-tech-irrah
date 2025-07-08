@@ -29,6 +29,6 @@ public class PaymentEntity {
     private BigDecimal price;
 
     @Column(nullable = false)
-    private LocalDate created_at = LocalDate.now();
+    private LocalDate createdAt = LocalDate.now();
 
 }

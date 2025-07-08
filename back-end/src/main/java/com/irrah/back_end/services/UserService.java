@@ -38,6 +38,9 @@ public class UserService {
     @Lazy
     private OrchestratorService orchestratorService;
 
+    @Autowired
+    private PaymentService paymentService;
+
     public ResponseEntity<Void> register(RegisterUserDto request) {
         this.documentValidator(request.document());
         if (repository.findAll().isEmpty()) {
@@ -189,8 +192,7 @@ public class UserService {
     public boolean canPayMessageCost(UserEntity user, MessageEntity message) {
         boolean canPay = user.getBalance().compareTo(message.getPrice()) >= 0;
         if(canPay) {
-            BigDecimal actualValue = user.getBalance();
-            user.setBalance(actualValue.subtract(message.getPrice()).toString());
+            this.paymentService.post(user, message);
             this.repository.save(user);
         }
         return canPay;
@@ -199,8 +201,7 @@ public class UserService {
     public boolean hasMonthLimit(UserEntity user, MessageEntity message) {
         boolean canPay = user.getMonthLimit().compareTo(message.getPrice()) >= 0;
         if(canPay) {
-            BigDecimal actualValue = user.getBalance();
-            user.setMonthLimit(actualValue.subtract(message.getPrice()).toString());
+            this.paymentService.post(user, message);
             this.repository.save(user);
         }
         return canPay;

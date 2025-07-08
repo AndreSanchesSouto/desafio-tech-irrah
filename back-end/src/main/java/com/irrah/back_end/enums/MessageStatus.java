@@ -18,4 +18,10 @@ public enum MessageStatus {
     public String getStatus() {
         return status;
     }
+
+    public static boolean isFinalStatus(String status) {
+        return DELIVERED.getStatus().equals(status) ||
+                READ.getStatus().equals(status) ||
+                FAILED.getStatus().equals(status);
+    }
 }

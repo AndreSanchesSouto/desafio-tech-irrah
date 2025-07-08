@@ -1,21 +1,31 @@
 import { CircleDollarSign, LogOut, MessageCircle, Settings, User } from "lucide-react";
 import { getUser } from "../../utils/getUser";
 import { useState } from "react";
-import { NavLink, useParams } from "react-router-dom";
+import { NavLink, useNavigate, useParams } from "react-router-dom";
+import { Role } from "../../utils/enums";
+import api from "../../utils/api";
+import { API_URL, getHeaders } from "../../utils/configs";
 
 export default function Topbar() {
     const [showButton, setShowButton] = useState(false);
     const { id } = useParams();
+    const navigate = useNavigate()
 
     function handleLogout() {
         localStorage.clear()
         window.location.href = '/auth'
     }
 
+    function gotToChats() {
+        if (getUser()?.role === Role.ADMINER) navigate('/chats')
+        if (getUser()?.role === Role.COMMON) navigate(`/chats/${localStorage.getItem('chat_id_common')}`)
+            setShowButton(false)
+    }
+
     return (
         <div className="bg-violet-500 w-full px-2 z-10">
-            <div className={`text-white font-semibold text-sm w-full py-1 flex ${id ? 'justify-between' : 'justify-end'}  items-center`}>
-                {id &&
+            <div className={`text-white font-semibold text-sm w-full py-1 flex ${getUser()?.role === Role.ADMINER && id ? 'justify-between' : 'justify-end'}  items-center`}>
+                {id && getUser()?.role === Role.ADMINER &&
                     <NavLink to="/chats">
                         Sair do chat
                     </NavLink>}
@@ -27,13 +37,12 @@ export default function Topbar() {
                 </div>
                 {showButton &&
                     <div className="text-violet-500 h-auto justify-start absolute flex flex-col bg-neutral-50 right-2 top-11 border-4 border-violet-500 rounded-md cursor-pointer">
-                        <NavLink className="flex gap-1 items-center px-3 hover:bg-violet-100 py-1"
-                            to={'/chats'}
-                            onClick={() => setShowButton(false)}
+                        <div className="flex gap-1 items-center px-3 hover:bg-violet-100 py-1"
+                            onClick={gotToChats}
                         >
                             <MessageCircle />
                             <p className="text-violet-500">Chats</p>
-                        </NavLink>
+                        </div>
                         <NavLink className="flex gap-1 items-center px-3 hover:bg-violet-100 py-1"
                             to={'/settings'}
                             onClick={() => setShowButton(false)}

@@ -36,8 +36,9 @@ public class MessageWorker {
 
                     // Simula envio da mensagem
                     Thread.sleep(2000);
-
-                    this.setMessageStatus(message);
+                    if(!MessageStatus.isFinalStatus(message.getStatus())) {
+                        this.setMessageStatus(message);
+                    }
 
                     webSocketController.sendMessageStatusUpdate(new ResponseMessageDto(message));
                 } catch (InterruptedException e) {
@@ -52,22 +53,25 @@ public class MessageWorker {
     private void setMessageStatus(MessageEntity message) {
         UserEntity sender = message.getUserSender();
 
-        if(sender.getPlanType() == null) throw new MessageException("Selecione um plano para enviar uma mensagem");
+        if(sender.getPlanType() == null) {
+            messageService.patchMessageStatus(message, MessageStatus.FAILED.getStatus());
+            throw new MessageException("Selecione um plano para enviar uma mensagem");
+        }
 
         if (sender.getPlanType().equals(PlanType.PREPAID.getPlanType())) {
             this.messageService.handlePrepaidMessage(sender, message);
         } else {
             this.messageService.handlePostpaidMessage(sender, message);
         }
-        System.out.println("message up");
-        System.out.println(message);
         messageService.patchMessageStatus(message, message.getStatus());
     }
 
     private void setProcessingMessageStatus(MessageEntity message) {
         System.out.println("Processando: " + message.getText());
-        message.setStatus(MessageStatus.PROCESSING.getStatus());
-        messageService.patchMessageStatus(message, message.getStatus());
+        if(!MessageStatus.isFinalStatus(message.getStatus())) {
+            message.setStatus(MessageStatus.PROCESSING.getStatus());
+            messageService.patchMessageStatus(message, message.getStatus());
+        }
     }
 
 }

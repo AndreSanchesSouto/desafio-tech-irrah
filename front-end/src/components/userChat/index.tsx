@@ -18,8 +18,8 @@ export default function UserChat() {
             conversationId: id,
             recipientId: "2359f629-5b67-4fbd-8f0d-0be6dc8ff645",
             content: message,
-            priority: urgent ? "urgent" : "normal",
-            userPlanType: getUser()?.planType
+            priority: urgent ? "URGENT" : "NORMAL",
+            userPlanType: getUser()?.planType?.toUpperCase()
         };
 
         api.post(`${API_URL}/messages`, data, getHeaders())

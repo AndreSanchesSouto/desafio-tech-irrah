@@ -1,6 +1,7 @@
 package com.irrah.back_end.services;
 
 import com.irrah.back_end.dtos.message.RequestMessageDto;
+import com.irrah.back_end.dtos.message.RequestMessagesToCheckDto;
 import com.irrah.back_end.dtos.message.ResponseMessageDto;
 import com.irrah.back_end.entities.ChatEntity;
 import com.irrah.back_end.entities.MessageEntity;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
@@ -43,7 +45,6 @@ public class MessageService {
         UserEntity receiver = selectReceiver(chat, sender.getId());
         MessageEntity message = createBaseMessage(request, sender, receiver);
 
-
         message.setStatus(MessageStatus.QUEUED.getStatus());
         message.setChat(chat);
         this.repository.save(message);
@@ -61,13 +62,12 @@ public class MessageService {
     }
 
     public void patchMessageStatus(MessageEntity message, String status) {
-        System.out.println(message.toString());
-        System.out.println("message.toString()");
         message.setStatus(MessageStatus.valueOf(status.toUpperCase()).getStatus());
         this.repository.save(message);
     }
 
     public MessageEntity findById(UUID id) {
+        if(id == null) throw new MessageException("Id deve ser válido");
         return this.repository.findById(id).orElseThrow(
                 () -> new MessageException("Mensagem não encontradaa")
         );
@@ -125,6 +125,22 @@ public class MessageService {
     private List<ResponseMessageDto> findByChatId(UUID chatId) {
         List<MessageEntity> messages =  this.repository.findByChatId(chatId);
         return messages
+                .stream()
+                .map(ResponseMessageDto::new)
+                .toList();
+    }
+
+    public List<ResponseMessageDto> markAsRead(RequestMessagesToCheckDto messages) {
+        List<MessageEntity> messagesList = new LinkedList<MessageEntity>();
+        for(UUID id : messages.messagesId()) {
+            MessageEntity messageEntity = this.findById(id);
+            messageEntity.setStatus(MessageStatus.READ.getStatus());
+            this.repository.save(messageEntity);
+            messagesList.add(messageEntity);
+            this.enqueueMessage(messageEntity);
+
+        }
+        return messagesList
                 .stream()
                 .map(ResponseMessageDto::new)
                 .toList();

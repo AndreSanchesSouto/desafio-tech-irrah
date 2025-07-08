@@ -43,10 +43,10 @@ public class UserEntity implements UserDetails {
     private String planType;
 
     @Column(nullable = true)
-    private BigDecimal balance; //prépago
+    private BigDecimal balance = new BigDecimal("0.0"); //prépago
 
     @Column(nullable = true)
-    private BigDecimal monthLimit;
+    private BigDecimal monthLimit = new BigDecimal("0.0");
 
     @Column(nullable = false)
     private LocalDate createdDt = LocalDate.now();

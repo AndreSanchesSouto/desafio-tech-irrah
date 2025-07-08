@@ -57,6 +57,7 @@ export default function Auth() {
         if (role === Role.COMMON) {
             api.get(`${API_URL}/chats/common-user`, getHeaders())
                 .then((chat) => {
+                    localStorage.setItem('chat_id_common', chat.data.id)
                     window.location.href = `chats/${chat.data.id}`;
                 }).finally(() => setShowLoad(false));
         }

@@ -17,15 +17,18 @@ export interface ActualUser {
 
 
 export default interface ResponseGenericChat {
+    senderId: string;
+    message: string;
     id: string;
     recipientId: string;
     recipientName: string;
     lastMessageContent: string;
     lastMessageTime: string;
     number: number;
+    status: string;
 }
 
-export default interface MessageChat {
+export interface MessageChat {
     id: string;
     status: string;
     senderId: string;
@@ -34,4 +37,11 @@ export default interface MessageChat {
     estimatedDelivery: string;
     cost: number;
     currentBalance: number;
+}
+
+export interface Payment {
+    id: string;
+    type: string;
+    price: number;
+    createdAt: string;
 }

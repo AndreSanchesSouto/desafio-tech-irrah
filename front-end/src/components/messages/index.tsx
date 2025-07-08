@@ -20,21 +20,21 @@ export default function Messages() {
 
     useEffect(() => {
         mutate(`${API_URL}/messages/${chatId}`)
-    })
+    }, messages)
 
 useEffect(() => {
     if (!messages) return;
 
-    const deliveredMessageIds = messages
+    const messagesId = messages
         .filter((message: MessageChat) => message.status === 'delivered')
-        .map((message: MessageChat) => message.id);
+        .map((message: MessageChat) =>  message.id );
 
-    if (deliveredMessageIds.length > 0) {
+    if (messagesId.length > 0) {
         const markAsRead = async () => {
-            try {
+            try {   
                 await api.post(
-                    `${API_URL}/messages/readed`,
-                    { deliveredMessageIds },
+                    `${API_URL}/messages/read`,
+                    { messagesId },
                     getHeaders()
                 );
             } catch (error) {
@@ -45,7 +45,6 @@ useEffect(() => {
         markAsRead();
     }
 }, [messages]);
-
 
     function isMyMessage(messageEntity: MessageChat): boolean {
         return messageEntity.senderId == getUser()?.id

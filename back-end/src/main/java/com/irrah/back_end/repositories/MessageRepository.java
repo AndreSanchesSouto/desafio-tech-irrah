@@ -22,8 +22,9 @@ public interface MessageRepository extends JpaRepository<MessageEntity, UUID> {
     @Query(value = """
             SELECT m.* FROM messages m
             JOIN chats c ON c.id = m.chat_id
-            WHERE m.status LIKE '%delivered%'
+            WHERE m.status IN ('delivered', 'read')
             AND c.id = :chatId
+            ORDER BY m.created_at
             """, nativeQuery = true)
     List<MessageEntity> findByChatId(@Param("chatId") UUID chatId);
 }

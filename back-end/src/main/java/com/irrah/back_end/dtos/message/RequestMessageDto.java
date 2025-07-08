@@ -9,8 +9,6 @@ import java.util.UUID;
 public record RequestMessageDto(
         @NotNull(message = "Selecione qual chat de mensagem deseje enviar a mensagem")
         UUID conversationId,
-        @NotNull(message = "")
-        UUID recipientId,
         @NotBlank(message = "Envie alguma mensagem")
         String content,
         @NotNull(message = "Selecione o tipo de mensagem que deseja")

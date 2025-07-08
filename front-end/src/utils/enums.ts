@@ -31,3 +31,16 @@ export function setMessageStatus(status: string | null): string {
         default:                        return "Desconecido";
     }
 }
+
+export const PlanType = {
+    PREPAID: "prepaid",
+    POSTPAID: "postpaid"
+} as const;
+
+export function setPlanType(status: string | null): string {
+    switch (status?.toLocaleLowerCase()) {
+        case PlanType.PREPAID:  return "Pré-Pago";
+        case PlanType.POSTPAID:   return "Pós-pago";
+        default:            return "Desconecido";
+    }
+}
