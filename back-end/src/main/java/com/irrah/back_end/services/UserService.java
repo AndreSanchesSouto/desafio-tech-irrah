@@ -55,7 +55,7 @@ public class UserService {
 
         UserEntity user = new UserEntity();
         user.setName(request.name());
-        user.setDocument(request.document());
+        user.setDocument(request.document().replace("\\D", ""));
         user.setStatus(UserStatus.ACTIVE.getUserStatus());
         user.setRole(role.getRole());
         this.repository.save(user);
@@ -155,17 +155,17 @@ public class UserService {
     private void updateUser(UserEntity user, PatchUserDto request) {
         user.setName(request.name());
         user.setStatus(request.status());
-        user.setBalance(request.balance().toString());
+        user.setBalance(request.balance());
         user.setPlanType(request.planType());
-        user.setMonthLimit(request.number().toString());
-        user.setDocument(request.documentId());
+        user.setMonthLimit(request.number());
+        user.setDocument(request.document());
 
         this.repository.save(user);
     }
 
     public void validateEditionData(UUID userId, PatchUserDto request) {
-        if (request.documentId() != null) {
-            Optional<UserEntity> existingUser = repository.findByDocument(request.documentId());
+        if (request.document() != null) {
+            Optional<UserEntity> existingUser = repository.findByDocument(request.document());
             if(existingUser.isPresent() && !existingUser.get().getId().equals(userId)) {
                 throw new UserException("O documento já está em uso");
             }

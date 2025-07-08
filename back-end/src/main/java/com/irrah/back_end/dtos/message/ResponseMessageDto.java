@@ -12,7 +12,6 @@ public record ResponseMessageDto(
         String message,
         UUID senderId,
         LocalDate timestamp,
-        String estimatedDelivery,
         BigDecimal cost,
         BigDecimal currentBalance
 ) {
@@ -23,7 +22,6 @@ public record ResponseMessageDto(
                message.getText(),
                message.getUserSender().getId(),
                message.getCreatedAt(),
-               "don't knmow",
                message.getPrice(),
                currentBalance
        );
@@ -36,7 +34,6 @@ public record ResponseMessageDto(
                 message.getText(),
                 message.getUserSender().getId(),
                 message.getCreatedAt(),
-                "don't knmow",
                 message.getPrice(),
                 null
         );

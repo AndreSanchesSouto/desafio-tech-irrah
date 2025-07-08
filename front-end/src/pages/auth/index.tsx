@@ -8,6 +8,7 @@ import type { Auth } from "../../utils/interfaces";
 import toast, { Toaster } from "react-hot-toast";
 import useUserStore from "../../utils/store/store";
 import { Role } from "../../utils/enums";
+import BCB_LOGO from "../../../public/BCB.png"
 
 export default function Auth() {
     const { register, getValues, handleSubmit } = useForm<Auth>();
@@ -53,11 +54,11 @@ export default function Auth() {
     function whereToGo(role: string) {
         console.log(role === Role.ADMINER)
         if (role === Role.ADMINER) window.location.href = '/chats';
-        if(role === Role.COMMON) {
+        if (role === Role.COMMON) {
             api.get(`${API_URL}/chats/common-user`, getHeaders())
-            .then((chat) => {
-                window.location.href = `chats/${chat.data.id}`;
-            }).finally(() => setShowLoad(false));
+                .then((chat) => {
+                    window.location.href = `chats/${chat.data.id}`;
+                }).finally(() => setShowLoad(false));
         }
     }
 
@@ -88,9 +89,11 @@ export default function Auth() {
         <>
             <div className='w-full h-screen flex flex-col justify-center items-center bg-gray-100 text-sm font-cabin'>
                 <div className='text-left flex flex-col gap-5 w-full justify-center items-center'>
-                    {/* <div className='max-w-[25rem]'>
-                    <img src={IMG_LOGO} loading="lazy" />
-                    </div> */}
+                    <div className='max-w-[25rem]'>
+                        <div className="h-auto w-32">
+                            <img src={BCB_LOGO} loading="lazy" />
+                        </div>
+                    </div>
                     <form id='login'
                         className='flex flex-col gap-3 justify-center items-center bg-violet-500 w-full max-w-[30rem] rounded-lg px-5 py-5 border-2 border-violet-800'
                     >
@@ -132,7 +135,7 @@ export default function Auth() {
                             </div>
                         </div>
 
-                        <button form='login' className='bg-violet-900 text-white font-bold w-16 h-8 rounded-md hover:bg-violet-700 hover:scale-105 hover:duration-200 duration-200'
+                        <button form='login' className='bg-violet-900 text-white font-bold w-24 h-8 rounded-md hover:bg-violet-700 hover:scale-105 hover:duration-200 duration-200'
                             onClick={handleSubmit(handleSubmitLogin)}
                         >
                             <div className='flex justify-center'>

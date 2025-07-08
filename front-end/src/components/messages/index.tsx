@@ -1,5 +1,5 @@
 import useSWR, { mutate } from "swr";
-import { API_URL } from "../../utils/configs";
+import { API_URL, getHeaders } from "../../utils/configs";
 import { useParams } from "react-router-dom";
 import useAxiosConfiguration from "../../utils/axiosFetcher";
 import type MessageChat from "../../utils/interfaces";
@@ -7,12 +7,13 @@ import { getUser } from "../../utils/getUser";
 import { useEffect, useRef } from "react";
 import { MessageState } from "../../utils/enums";
 import { CircleArrowOutUpRight, CircleCheck, CircleUserRound, CircleX, Clock, RefreshCcw } from "lucide-react";
+import api from "../../utils/api";
 
 export default function Messages() {
     const fetcher = useAxiosConfiguration();
     const { id: chatId } = useParams()
 
-    const { data: chats } = useSWR(
+    const { data: messages } = useSWR<MessageChat[]>(
         `${API_URL}/messages/${chatId}`,
         fetcher
     );
@@ -21,6 +22,31 @@ export default function Messages() {
         mutate(`${API_URL}/messages/${chatId}`)
     })
 
+useEffect(() => {
+    if (!messages) return;
+
+    const deliveredMessageIds = messages
+        .filter((message: MessageChat) => message.status === 'delivered')
+        .map((message: MessageChat) => message.id);
+
+    if (deliveredMessageIds.length > 0) {
+        const markAsRead = async () => {
+            try {
+                await api.post(
+                    `${API_URL}/messages/readed`,
+                    { deliveredMessageIds },
+                    getHeaders()
+                );
+            } catch (error) {
+                console.error("Erro ao marcar mensagens como lidas:", error);
+            }
+        };
+
+        markAsRead();
+    }
+}, [messages]);
+
+
     function isMyMessage(messageEntity: MessageChat): boolean {
         return messageEntity.senderId == getUser()?.id
     }
@@ -28,7 +54,7 @@ export default function Messages() {
     return (
         <div className="w-full h-full flex flex-col p-1 absolute">
             {
-                chats?.map((messageEntity: MessageChat) => (
+                messages?.map((messageEntity: MessageChat) => (
                     <div key={messageEntity.id}
                         className={`resize-none flex py-2 rounded-md
                             ${isMyMessage(messageEntity) ?

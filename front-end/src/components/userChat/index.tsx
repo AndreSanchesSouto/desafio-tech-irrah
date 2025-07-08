@@ -14,13 +14,12 @@ export default function UserChat() {
     const [urgent, setUrgent] = useState(false)
 
     function handleSendMessage() {
-
         const data = {
             conversationId: id,
             recipientId: "2359f629-5b67-4fbd-8f0d-0be6dc8ff645",
             content: message,
             priority: urgent ? "urgent" : "normal",
-            userPlanType: "POSTPAID"
+            userPlanType: getUser()?.planType
         };
 
         api.post(`${API_URL}/messages`, data, getHeaders())

@@ -15,7 +15,6 @@ import java.util.UUID;
 
 @Entity
 @Getter
-
 @Table(name = "users")
 public class UserEntity implements UserDetails {
 
@@ -65,7 +64,7 @@ public class UserEntity implements UserDetails {
 
     public void setMonthLimit(String setMonthLimit) {
         BigDecimal actualValue = new BigDecimal(setMonthLimit);
-        this.balance = actualValue.setScale(2, RoundingMode.HALF_UP);
+        this.monthLimit = actualValue.setScale(2, RoundingMode.HALF_UP);
     }
 
     @Override

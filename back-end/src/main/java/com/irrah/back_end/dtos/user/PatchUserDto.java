@@ -8,9 +8,9 @@ import java.util.UUID;
 
 public record PatchUserDto(
         String name,
-        String documentId,
-        BigDecimal balance,
-        BigDecimal number,
+        String document,
+        String balance,
+        String number,
         String planType,
         String status
 ) { }

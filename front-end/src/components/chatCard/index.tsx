@@ -18,7 +18,7 @@ export default function Chatcard({...props}: ResponseGenericChat) {
             </div>
             <div className="flex flex-col">
                 <p className="font-medium">{props.recipientName}</p>
-                <p className="text-xs">{props.id}</p>
+                <p className="text-xs"> - {props.lastMessageContent}</p>
             </div>
         </NavLink>
     )

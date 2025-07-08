@@ -1,10 +1,13 @@
 import { Outlet } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
+import View from "../components/view";
 
 export default function BCB() {
     return (
         <div className="h-screen">
-            <Outlet />
+            <View>
+                <Outlet />
+            </View>
             <Toaster
                 position="bottom-center"
                 gutter={12}
