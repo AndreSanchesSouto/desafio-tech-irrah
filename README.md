@@ -1,4 +1,4 @@
-# Projeto Fullstack - Big Chat Brasil (BBC)
+# Projeto FullStack - Big Chat Brasil (BBC)
 
 Esse projeto foi desenvolvido para se aplicar na vaga de desenvolvedor Full-Stack. Ele leva em conta a proposta apresentada no desafio técnico do Grupo Irrah.
 
